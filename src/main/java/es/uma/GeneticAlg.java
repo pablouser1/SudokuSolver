@@ -10,10 +10,6 @@ import java.util.Arrays;
 public class GeneticAlg {
     public static void main(String[] args) throws InvalidConfigurationException {
         int option = 1;
-        //int option = 2;
-        //int option = 3;
-        //int option = 4;
-        // int option = 5;
 
         int []puzzle = {};
         switch (option) {
@@ -45,11 +41,13 @@ public class GeneticAlg {
 
         int[][] matrix = Helpers.monoToBidi(puzzle, 9, 9);
 
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                System.out.print(matrix[i][j] + " ");
-            }
-            System.out.println();
+        printMatrix(matrix);
+
+        boolean valid = Conds.checkValid(matrix);
+
+        if (!valid) {
+            System.out.println("Not valid");
+            return;
         }
 
         Configuration conf = new DefaultConfiguration();
@@ -63,17 +61,32 @@ public class GeneticAlg {
 
         Chromosome sampleChromosome = new Chromosome(conf, sampleGenes);
         conf.setSampleChromosome(sampleChromosome);
-        conf.setPopulationSize(81);
+        conf.setPopulationSize(50);
         Genotype population = Genotype.randomInitialGenotype(conf);
         for (int i = 0; i < 1000; i++) {
             population.evolve();
-            IChromosome fittest = population.getFittestChromosome();
-            if (fit.getFitnessValue(fittest) == 0.0) {
-                System.out.println("Solution found in " + i + " generations.");
-            }
         }
+        IChromosome fittest = population.getFittestChromosome();
+        printSol(fittest.getGenes());
+    }
 
+    private static void printMatrix(int[][] matrix) {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                System.out.print(matrix[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
 
-        System.out.println(Arrays.toString(puzzle));
+    private static void printSol(Gene[] genes) {
+        System.out.println("SOLUTION:");
+        int index = 0;
+        for (int row = 0; row < 9; row++) {
+            for (int col = 0; col < 9; col++) {
+                System.out.print(genes[index++].getAllele() + " ");
+            }
+            System.out.println();
+        }
     }
 }
